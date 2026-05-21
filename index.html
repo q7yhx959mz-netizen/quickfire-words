@@ -254,7 +254,114 @@ h1{
 </head>
 
 <body>
+<script type="module">
 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  set,
+  update,
+  onValue
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* =======================
+   1. FIREBASE SETUP
+======================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyBYQCG4OWdBVjMriKKH47XvGkL14REjjU8",
+  authDomain: "quickfirebe.firebaseapp.com",
+  projectId: "quickfirebe",
+  storageBucket: "quickfirebe.firebasestorage.app",
+  messagingSenderId: "657721364096",
+  appId: "1:657721364096:web:30971f31abeeeeba4ce065"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+/* =======================
+   2. CREATE ROOM (HOST)
+======================= */
+window.createRoom = function(playerName) {
+  const roomId = Math.random().toString(36).substring(2, 7).toUpperCase();
+
+  set(ref(db, "rooms/" + roomId), {
+    host: playerName,
+    state: "lobby",
+    currentTurn: null,
+    round: 0,
+    players: {
+      [playerName]: {
+        score: 0,
+        isHost: true
+      }
+    }
+  });
+
+  return roomId;
+};
+
+/* =======================
+   3. JOIN ROOM
+======================= */
+window.joinRoom = function(roomId, playerName) {
+  update(ref(db, "rooms/" + roomId + "/players"), {
+    [playerName]: {
+      score: 0,
+      isHost: false
+    }
+  });
+};
+
+/* =======================
+   4. REAL-TIME SYNC
+======================= */
+window.listenToRoom = function(roomId, callback) {
+  onValue(ref(db, "rooms/" + roomId), (snapshot) => {
+    const data = snapshot.val();
+    callback(data);
+  });
+};
+
+/* =======================
+   5. START GAME (HOST ONLY)
+======================= */
+window.startGame = function(roomId) {
+  update(ref(db, "rooms/" + roomId), {
+    state: "playing",
+    round: 1
+  });
+};
+
+/* =======================
+   6. NEXT TURN
+======================= */
+window.nextTurn = function(roomId, players) {
+  const names = Object.keys(players);
+  const next = names[Math.floor(Math.random() * names.length)];
+
+  update(ref(db, "rooms/" + roomId), {
+    currentTurn: next
+  });
+};
+
+/* =======================
+   7. ADD SCORE
+======================= */
+window.addScore = function(roomId, playerName, amount) {
+  const playerRef = ref(db, `rooms/${roomId}/players/${playerName}`);
+
+  onValue(playerRef, (snap) => {
+    const data = snap.val() || { score: 0 };
+
+    update(playerRef, {
+      score: data.score + amount
+    });
+  }, { onlyOnce: true });
+};
+
+</script>
 <!-- HOME -->
 <div id="homeScreen" class="screen">
 
