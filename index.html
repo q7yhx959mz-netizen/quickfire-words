@@ -450,7 +450,29 @@ h1{
 </div>
 
 <script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  set,
+  update,
+  onValue,
+  push
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyBYQCG4OWdBVjMriKKH47XvGkL14REjjU8",
+  authDomain: "quickfirebe.firebaseapp.com",
+  projectId: "quickfirebe",
+  storageBucket: "quickfirebe.firebasestorage.app",
+  messagingSenderId: "657721364096",
+  appId: "1:657721364096:web:30971f31abeeeeba4ce065"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+</script>
 const words = [
 
 {
