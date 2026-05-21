@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Quickfire Words</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Inter',sans-serif;
+    background:#0f172a;
+    color:white;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+.hidden{
+    display:none !important;
+}
+
+button{
+    border:none;
+    cursor:pointer;
+    transition:.2s;
+    font-family:'Inter',sans-serif;
+}
+
+button:hover{
+    transform:scale(1.03);
+}
+
+.screen{
+    width:100%;
+    min-height:100vh;
+    padding:24px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+}
+
+.card{
+    background:#1e293b;
+    border-radius:24px;
+    padding:24px;
+    width:100%;
+    max-width:700px;
+    box-shadow:0 10px 40px rgba(0,0,0,.3);
+}
+
+h1{
+    font-size:3rem;
+    margin-bottom:12px;
+    text-align:center;
+}
+
+.subtitle{
+    opacity:.8;
+    margin-bottom:32px;
+    text-align:center;
+}
+
+.main-btn{
+    width:100%;
+    padding:18px;
+    border-radius:18px;
+    margin-top:14px;
+    font-size:1rem;
+    font-weight:700;
+    background:#38bdf8;
+    color:white;
+}
+
+.secondary-btn{
+    width:100%;
+    padding:16px;
+    border-radius:16px;
+    margin-top:12px;
+    background:#334155;
+    color:white;
+}
+
+.rules{
+    margin-top:18px;
+    background:#0f172a;
+    border-radius:18px;
+    overflow:hidden;
+}
+
+.rules-header{
+    padding:18px;
+    background:#334155;
+    font-weight:700;
+}
+
+.rules-content{
+    padding:20px;
+    line-height:1.7;
+}
+
+.team-input{
+    width:100%;
+    padding:16px;
+    border-radius:14px;
+    border:none;
+    margin-top:12px;
+    background:#0f172a;
+    color:white;
+    font-size:1rem;
+}
+
+.top-bar{
+    display:flex;
+    justify-content:space-between;
+    width:100%;
+    max-width:900px;
+    margin-bottom:20px;
+    gap:16px;
+    flex-wrap:wrap;
+}
+
+.info-box{
+    flex:1;
+    min-width:120px;
+    background:#1e293b;
+    padding:18px;
+    border-radius:18px;
+    text-align:center;
+}
+
+.word-card{
+    background:#1e293b;
+    width:100%;
+    max-width:900px;
+    border-radius:30px;
+    padding:40px;
+    text-align:center;
+    box-shadow:0 10px 50px rgba(0,0,0,.3);
+}
+
+.word{
+    font-size:3rem;
+    font-weight:800;
+    margin-bottom:24px;
+}
+
+.banned{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:12px;
+}
+
+.badge{
+    background:#334155;
+    padding:10px 16px;
+    border-radius:999px;
+}
+
+.game-buttons{
+    margin-top:28px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:16px;
+    justify-content:center;
+}
+
+.correct-btn{
+    background:#22c55e;
+    color:white;
+    padding:18px 30px;
+    border-radius:18px;
+    font-weight:700;
+}
+
+.skip-btn{
+    background:#ef4444;
+    color:white;
+    padding:18px 30px;
+    border-radius:18px;
+    font-weight:700;
+}
+
+.pause-btn{
+    background:#facc15;
+    color:black;
+    padding:18px 30px;
+    border-radius:18px;
+    font-weight:700;
+}
+
+.bonus-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+    margin-top:28px;
+}
+
+.bonus-card{
+    background:#1e293b;
+    border:2px solid #facc15;
+    border-radius:24px;
+    padding:24px;
+    text-align:center;
+    cursor:pointer;
+}
+
+.bonus-card:hover{
+    transform:translateY(-4px);
+}
+
+.points{
+    color:#facc15;
+    margin-top:12px;
+    font-weight:700;
+}
+
+.leaderboard{
+    margin-top:24px;
+}
+
+.player-row{
+    background:#1e293b;
+    padding:18px;
+    border-radius:18px;
+    margin-bottom:12px;
+    display:flex;
+    justify-content:space-between;
+}
+
+@media(max-width:700px){
+    h1{
+        font-size:2rem;
+    }
+
+    .word{
+        font-size:2.2rem;
+    }
+
+    .bonus-grid{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- HOME -->
+<div id="homeScreen" class="screen">
+
+    <div class="card">
+
+        <h1>QUICKFIRE WORDS</h1>
+
+        <p class="subtitle">
+            Fast paced word chaos for teams.
+        </p>
+
+        <button class="main-btn" onclick="startSetup()">
+            START GAME
+        </button>
+
+        <button class="secondary-btn" onclick="toggleRules()">
+            RULES
+        </button>
+
+        <div id="rulesBox" class="rules hidden">
+
+            <div class="rules-header">
+                HOW TO PLAY
+            </div>
+
+            <div class="rules-content">
+
+                <p>
+                    Describe the word without using any banned words.
+                </p>
+
+                <br>
+
+                <p>
+                    Your team must guess before the timer ends.
+                </p>
+
+                <br>
+
+                <p>
+                    Correct guesses earn points.
+                </p>
+
+                <br>
+
+                <p>
+                    The final turn is a BONUS ROUND where you choose from 4 words with different point values.
+                </p>
+
+                <br>
+
+                <p>
+                    Saying a banned word in the bonus round subtracts points.
+                </p>
+
+                <br>
+
+                <p>
+                    PAUSE BUTTON:
+                    Pause and resume the timer anytime.
+                </p>
+
+                <br>
+
+                <p>
+                    ADD TO HOME SCREEN:
+                </p>
+
+                <br>
+
+                <p>
+                    iPhone:
+                    Share → Add to Home Screen
+                </p>
+
+                <br>
+
+                <p>
+                    Android:
+                    Browser Menu → Add to Home Screen
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- SETUP -->
+<div id="setupScreen" class="screen hidden">
+
+    <div class="card">
+
+        <h1>TEAM SETUP</h1>
+
+        <input id="team1" class="team-input" placeholder="Team 1 Name">
+        <input id="team2" class="team-input" placeholder="Team 2 Name">
+
+        <button class="main-btn" onclick="beginGame()">
+            BEGIN
+        </button>
+
+    </div>
+
+</div>
+
+<!-- GAME -->
+<div id="gameScreen" class="screen hidden">
+
+    <div class="top-bar">
+
+        <div class="info-box">
+            <div>TIMER</div>
+            <h2 id="timer">60</h2>
+        </div>
+
+        <div class="info-box">
+            <div>TEAM</div>
+            <h2 id="currentTeam">Red</h2>
+        </div>
+
+        <div class="info-box">
+            <div>SCORE</div>
+            <h2 id="scoreDisplay">0</h2>
+        </div>
+
+    </div>
+
+    <div class="word-card">
+
+        <div class="word" id="wordText">
+            Apple
+        </div>
+
+        <div class="banned" id="bannedWords">
+
+        </div>
+
+        <div class="game-buttons">
+
+            <button class="correct-btn" onclick="gotIt()">
+                GOT IT
+            </button>
+
+            <button class="skip-btn" onclick="nextWord()">
+                SKIP
+            </button>
+
+            <button class="pause-btn" onclick="togglePause()">
+                PAUSE
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- BONUS ROUND -->
+<div id="bonusScreen" class="screen hidden">
+
+    <h1>BONUS ROUND</h1>
+
+    <p class="subtitle">
+        Choose wisely...
+    </p>
+
+    <div class="bonus-grid" id="bonusGrid">
+
+    </div>
+
+</div>
+
+<!-- LEADERBOARD -->
+<div id="leaderboardScreen" class="screen hidden">
+
+    <div class="card">
+
+        <h1>FINAL LEADERBOARD</h1>
+
+        <div class="leaderboard" id="leaderboardList">
+
+        </div>
+
+        <button class="main-btn" onclick="restartGame()">
+            PLAY AGAIN
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+const words = [
+
+{
+word:"Apple",
+banned:["Fruit","Red","Tree","Juice"],
+points:1
+},
+
+{
+word:"Beach",
+banned:["Sand","Ocean","Water","Swim"],
+points:2
+},
+
+{
+word:"Pizza",
+banned:["Cheese","Slice","Pepperoni","Italy"],
+points:2
+},
+
+{
+word:"Tiger",
+banned:["Animal","Stripes","Cat","Jungle"],
+points:3
+},
+
+{
+word:"Rocket",
+banned:["Space","Launch","NASA","Ship"],
+points:4
+},
+
+{
+word:"School",
+banned:["Teacher","Class","Student","Learn"],
+points:1
+},
+
+{
+word:"Laptop",
+banned:["Computer","Keyboard","Screen","Technology"],
+points:2
+},
+
+{
+word:"Volcano",
+banned:["Lava","Mountain","Erupt","Fire"],
+points:5
+}
+
+];
+
+let currentWord = {};
+let score = 0;
+let timer = 60;
+let gameInterval;
+let paused = false;
+
+let teams = [];
+let currentTeamIndex = 0;
+
+let playerStats = {};
+
+function toggleRules(){
+    document.getElementById("rulesBox").classList.toggle("hidden");
+}
+
+function startSetup(){
+    document.getElementById("homeScreen").classList.add("hidden");
+    document.getElementById("setupScreen").classList.remove("hidden");
+}
+
+function beginGame(){
+
+    const team1 =
+        document.getElementById("team1").value || "Team Red";
+
+    const team2 =
+        document.getElementById("team2").value || "Team Blue";
+
+    teams = [team1,team2];
+
+    teams.forEach(team=>{
+        playerStats[team]=0;
+    });
+
+    document.getElementById("setupScreen").classList.add("hidden");
+    document.getElementById("gameScreen").classList.remove("hidden");
+
+    document.getElementById("currentTeam").innerText =
+        teams[currentTeamIndex];
+
+    startTimer();
+
+    nextWord();
+}
+
+function startTimer(){
+
+    gameInterval = setInterval(()=>{
+
+        if(paused) return;
+
+        timer--;
+
+        document.getElementById("timer").innerText = timer;
+
+        if(timer <= 0){
+
+            clearInterval(gameInterval);
+
+            startBonusRound();
+        }
+
+    },1000);
+}
+
+function nextWord(){
+
+    currentWord =
+        words[Math.floor(Math.random()*words.length)];
+
+    document.getElementById("wordText").innerText =
+        currentWord.word;
+
+    const bannedContainer =
+        document.getElementById("bannedWords");
+
+    bannedContainer.innerHTML = "";
+
+    currentWord.banned.forEach(word=>{
+
+        const badge =
+            document.createElement("div");
+
+        badge.className = "badge";
+
+        badge.innerText = word;
+
+        bannedContainer.appendChild(badge);
+
+    });
+
+}
+
+function gotIt(){
+
+    score += currentWord.points;
+
+    playerStats[teams[currentTeamIndex]]++;
+
+    document.getElementById("scoreDisplay").innerText =
+        score;
+
+    nextWord();
+}
+
+function togglePause(){
+
+    paused = !paused;
+
+}
+
+function startBonusRound(){
+
+    document.getElementById("gameScreen").classList.add("hidden");
+
+    document.getElementById("bonusScreen").classList.remove("hidden");
+
+    const bonusGrid =
+        document.getElementById("bonusGrid");
+
+    bonusGrid.innerHTML = "";
+
+    const bonusWords =
+        [...words].sort(()=>0.5 - Math.random()).slice(0,4);
+
+    bonusWords.forEach(word=>{
+
+        const card =
+            document.createElement("div");
+
+        card.className = "bonus-card";
+
+        card.innerHTML = `
+            <h2>${word.word}</h2>
+            <div class="points">
+                ${word.points} POINTS
+            </div>
+        `;
+
+        card.onclick = ()=>{
+
+            score += word.points;
+
+            showLeaderboard();
+        };
+
+        bonusGrid.appendChild(card);
+
+    });
+
+}
+
+function showLeaderboard(){
+
+    document.getElementById("bonusScreen").classList.add("hidden");
+
+    document.getElementById("leaderboardScreen").classList.remove("hidden");
+
+    const leaderboard =
+        document.getElementById("leaderboardList");
+
+    leaderboard.innerHTML = "";
+
+    Object.keys(playerStats).forEach(player=>{
+
+        const row =
+            document.createElement("div");
+
+        row.className = "player-row";
+
+        row.innerHTML = `
+            <div>${player}</div>
+            <div>${playerStats[player]} words</div>
+        `;
+
+        leaderboard.appendChild(row);
+
+    });
+
+}
+
+function restartGame(){
+
+    location.reload();
+
+}
+
+</script>
+
+</body>
+</html>
