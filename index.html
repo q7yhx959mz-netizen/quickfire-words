@@ -580,6 +580,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 </script>
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+set(ref(db, "test"), {
+  message: "it works"
+});    
 const words = [
 
 {
